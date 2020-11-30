@@ -1,0 +1,12 @@
+mod =  [
+	"BotImprovements_Combat"
+]
+
+package = [
+	"resource_packages/BotImprovements_Combat/BotImprovements_Combat"
+]
+
+lua = [
+	"localization/*"
+	"scripts/mods/BotImprovements_Combat/*"
+]
