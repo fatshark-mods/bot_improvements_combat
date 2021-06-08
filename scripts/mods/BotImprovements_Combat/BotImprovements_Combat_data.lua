@@ -13,13 +13,6 @@ return {
 			["default_value"] = true
 		},
 		{
-			["setting_name"] = "stay_closer",
-			["widget_type"] = "checkbox",
-			["text"] = "Bots Stay Closer",
-			["tooltip"] = "Bots will stay closer to humans when many enemies are attacking.",
-			["default_value"] = true
-		},
-		{
 			["setting_name"] = "ping_elites",
 			["widget_type"] = "checkbox",
 			["text"] = "Bots Ping Attacking Elites",

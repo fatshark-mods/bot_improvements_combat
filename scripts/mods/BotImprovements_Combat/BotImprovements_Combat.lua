@@ -30,72 +30,6 @@ mod.on_setting_changed = function(setting_name)
 end
 
 --[[
-	Will make the bots stick closer to players, especially during swarms.
---]]
-local aggro_level = 0
-mod:hook(AISystem, "update_brains", function (func, self, ...)
-	local result = func(self, ...)
-
-	if mod:get("stay_closer") then
-		local fight_melee = BotActions.default.fight_melee
-		aggro_level = (self.number_ordinary_aggroed_enemies * 2 / 3)
-		fight_melee.override_engage_range_to_follow_pos = math.max(3, 12 - aggro_level)
-		fight_melee.engage_range = math.max(2, 6 - aggro_level)
-		fight_melee.override_engage_range_to_follow_pos_threat = math.max(3, 6 - aggro_level)
-	end
-
-	return result
-end)
-
-mod:hook(BTConditions, "bot_in_melee_range", function (func, blackboard)
-	if not mod:get("stay_closer") then
-		return func(blackboard)
-	end
-
-	local target_unit = blackboard.target_unit
-
-	if not ALIVE[target_unit] then
-		return false
-	end
-
-	local self_unit = blackboard.unit
-	local wielded_slot = blackboard.inventory_extension:equipment().wielded_slot
-	local melee_range = nil
-	local breed = Unit.get_data(target_unit, "breed")
-
-	if blackboard.urgent_target_enemy == target_unit or blackboard.opportunity_target_enemy == target_unit or Vector3.is_valid(blackboard.taking_cover.cover_position:unbox()) then
-		melee_range = (breed and breed.bot_opportunity_target_melee_range) or 3
-
-		if wielded_slot == "slot_ranged" then
-			melee_range = (breed and breed.bot_opportunity_target_melee_range_while_ranged) or 2
-		end
-	else
-		melee_range = math.max(5, 11 - aggro_level) --12 unmodded
-
-		if wielded_slot == "slot_ranged" then
-			melee_range = math.max(3.5, 9 - aggro_level) --10 unmodded
-		end
-	end
-
-	local target_aim_position = nil
-	local override_aim_node_name = breed and breed.bot_melee_aim_node
-
-	if override_aim_node_name then
-		local override_aim_node = Unit.node(target_unit, override_aim_node_name)
-		target_aim_position = Unit.world_position(target_unit, override_aim_node)
-	else
-		target_aim_position = POSITION_LOOKUP[target_unit]
-	end
-
-	local offset = target_aim_position - POSITION_LOOKUP[self_unit]
-	local distance_squared = Vector3.length_squared(offset)
-	local in_range = distance_squared < melee_range^2
-	local z_offset = offset.z
-
-	return in_range and z_offset > -1.5 and z_offset < 2
-end)
-
---[[
 	Improve bot melee behaviour.
 --]]
 local DEFAULT_MAXIMAL_MELEE_RANGE = 5
@@ -259,7 +193,8 @@ local attempt_ping_elite = function (blackboard)
 			local network_manager = Managers.state.network
 			local self_unit_id = network_manager.unit_game_object_id(network_manager, self_unit)
 			local enemy_unit_id = network_manager.unit_game_object_id(network_manager, enemy_unit)
-			network_manager.network_transmit:send_rpc_server("rpc_ping_unit", self_unit_id, enemy_unit_id, false)
+			local ping_type = PingTypes.PING_ONLY
+			network_manager.network_transmit:send_rpc_server("rpc_ping_unit", self_unit_id, enemy_unit_id, false, ping_type)
 			return
 		end
 	end
@@ -330,7 +265,7 @@ mod:hook(PlayerBotBase, "_enemy_path_allowed", function (func, self, enemy_unit)
 	local enemy_pos = POSITION_LOOKUP[enemy_unit]
 	local self_pos = POSITION_LOOKUP[self._unit]
 	
-	if Vector3.distance_squared(enemy_pos, self_pos) > 400 then
+	if Vector3.distance_squared(enemy_pos, self_pos) > 350 then
 		return false
 	end
 
@@ -439,6 +374,8 @@ mod:hook(AIBotGroupSystem, "_update_urgent_targets", function (func, self, dt, t
 							best_target = target_unit
 							best_distance = distance
 						end
+					else
+						urgent_targets[target_unit] = nil
 					end
 				else
 					urgent_targets[target_unit] = nil
@@ -463,7 +400,7 @@ mod:hook(AIBotGroupSystem, "_update_urgent_targets", function (func, self, dt, t
 				end
 			end
 
-			blackboard.revive_with_urgent_target = best_target and self:_can_revive_with_urgent_target(bot_unit, self_pos, blackboard, best_target)
+			blackboard.revive_with_urgent_target = best_target and self:_can_revive_with_urgent_target(bot_unit, self_pos, blackboard, best_target, t)
 			blackboard.urgent_target_enemy = best_target
 			blackboard.urgent_target_distance = best_distance
 			local hit_by_projectile = blackboard.hit_by_projectile
