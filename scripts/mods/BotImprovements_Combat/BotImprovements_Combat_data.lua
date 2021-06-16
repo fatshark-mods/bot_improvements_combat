@@ -9,14 +9,7 @@ return {
 			["setting_name"] = "better_melee",
 			["widget_type"] = "checkbox",
 			["text"] = "Improved Bot Melee Choices",
-			["tooltip"] = "Improves bots' decision-making about which melee attack to use, making them favor normal attacks more.",
-			["default_value"] = true
-		},
-		{
-			["setting_name"] = "stay_closer",
-			["widget_type"] = "checkbox",
-			["text"] = "Bots Stay Closer",
-			["tooltip"] = "Bots will stay closer to humans when many enemies are attacking.",
+			["tooltip"] = "Improves bots' decision-making about which melee attack to use.",
 			["default_value"] = true
 		},
 		{
@@ -25,6 +18,66 @@ return {
 			["text"] = "Bots Ping Attacking Elites",
 			["tooltip"] = "Allows bots to ping elite enemies that are targeting them.",
 			["default_value"] = true
-		}
+		},
+		{
+			["setting_name"] = "heal_threshold",
+			["widget_type"] = "dropdown",
+			["text"] = "Bots Healing Threshold",
+			["tooltip"] = "Choose when bots not wearing Natural Bond will heal themselves.",
+			["options"] = {
+					{text = "When Hurt (Default)", value = 1},
+					{text = "When Wounded", value = 2},
+					{text = "Extra Heals Available", value = 3}
+				},
+			["default_value"] = 1
+		},
+		{
+			["setting_name"] = "heal_threshold_nb",
+			["widget_type"] = "dropdown",
+			["text"] = "Bots Healing Threshold (Natural Bond)",
+			["tooltip"] = "Choose when bots wearing Natural Bond will heal themselves.",
+			["options"] = {
+					{text = "When Hurt", value = 1},
+					{text = "When Wounded (Default)", value = 2},
+					{text = "Extra Heals Available", value = 3}
+				},
+			["default_value"] = 2
+		},
+		{
+			["setting_name"] = "stop_chasing",
+			["widget_type"] = "checkbox",
+			["text"] = "Bots No Longer Chase Specials",
+			["tooltip"] = "Stop bots from chasing specials that are too far away from them.",
+			["default_value"] = true
+		},
+		{
+			["setting_name"] = "ignore_lof",
+			["widget_type"] = "checkbox",
+			["text"] = "Bots Ignore Line Of Fire",
+			["tooltip"] = "Bots will now ignore line-of-fire threats from gunners, unless the gunner is very close.",
+			["default_value"] = true
+		},
+		{
+			["setting_name"] = "ignore_bosses",
+			["widget_type"] = "checkbox",
+			["text"] = "Bots No Longer Focus Bosses",
+			["tooltip"] = "Bots will ignore bosses entirely unless attacked by them, or no other enemies are nearby.",
+			["default_value"] = true
+		},
+		{
+			["setting_name"] = "better_revive",
+			["widget_type"] = "checkbox",
+			["text"] = "Improved Revive Logic",
+			["tooltip"] = "Makes bots more likely to attempt revives through danger, and makes some careers use their active ability to secure an attempt if needed.",
+			["default_value"] = true
+		},
+		{
+			["setting_name"] = "better_ult",
+			["widget_type"] = "checkbox",
+			["text"] = "Improved Active Ability Usage",
+			["tooltip"] = "Changes the logic that several careers use to determine when to use their active ability. \n" ..
+			"NOTE : This may cause some careers to use their active ability too sparingly on difficulties below legend.",
+			["default_value"] = true
+		},
 	},
 }
