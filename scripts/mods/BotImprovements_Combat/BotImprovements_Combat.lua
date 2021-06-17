@@ -147,7 +147,7 @@ end
 
 local pinged_elites = mod:persistent_table("pinged_elites")
 
-mod:hook(PingTargetExtension, "set_pinged", function (func, self, pinged, flash, pinger_unit, show_outline)
+mod:hook(PingTargetExtension, "set_pinged", function (func, self, pinged, ...)
 	if not pinged then
 		for bot_unit, ping_data in pairs(pinged_elites) do
 			if ping_data.unit == self._unit then
@@ -156,7 +156,7 @@ mod:hook(PingTargetExtension, "set_pinged", function (func, self, pinged, flash,
 		end
 	end
 
-	return func(self, pinged, flash, pinger_unit, show_outline)
+	return func(self, pinged, ...)
 end)
 
 local attempt_ping_elite = function (blackboard)
@@ -194,7 +194,7 @@ local attempt_ping_elite = function (blackboard)
 			local self_unit_id = network_manager.unit_game_object_id(network_manager, self_unit)
 			local enemy_unit_id = network_manager.unit_game_object_id(network_manager, enemy_unit)
 			local ping_type = PingTypes.PING_ONLY
-			network_manager.network_transmit:send_rpc_server("rpc_ping_unit", self_unit_id, enemy_unit_id, false, ping_type)
+			network_manager.network_transmit:send_rpc_server("rpc_ping_unit", self_unit_id, enemy_unit_id, false, ping_type, 1)
 			return
 		end
 	end
