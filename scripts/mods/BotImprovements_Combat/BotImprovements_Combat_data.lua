@@ -44,6 +44,31 @@ return {
 			["default_value"] = 2
 		},
 		{
+			["setting_name"] = "heal_threshold_other",
+			["widget_type"] = "dropdown",
+			["text"] = "Bots Heal Other Threshold",
+			["tooltip"] = "Choose when bots will want to heal their teammates.",
+			["options"] = {
+					{text = "Low Permanent (Default)", value = 1},
+					{text = "Low Temporary", value = 2},
+					{text = "When Wounded", value = 3}
+				},
+			["default_value"] = 1
+		},
+		{
+			["setting_name"] = "heal_threshold_zealot",
+			["widget_type"] = "dropdown",
+			["text"] = "Bots Heal Zealot Threshold",
+			["tooltip"] = "Choose when bots will want to heal the Zealot. Uses Heal Other Threshold when set to Default or to a lower setting than Heal Other.",
+			["options"] = {
+					{text = "Default", value = 1},
+					{text = "Low Temporary", value = 2},
+					{text = "When Wounded", value = 3},
+					{text = "When Wounded And Low", value = 4}
+				},
+			["default_value"] = 1
+		},
+		{
 			["setting_name"] = "stop_chasing",
 			["widget_type"] = "checkbox",
 			["text"] = "Bots No Longer Chase Specials",
