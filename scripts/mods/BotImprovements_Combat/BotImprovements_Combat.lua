@@ -194,7 +194,7 @@ local attempt_ping_elite = function (blackboard)
 			local self_unit_id = network_manager.unit_game_object_id(network_manager, self_unit)
 			local enemy_unit_id = network_manager.unit_game_object_id(network_manager, enemy_unit)
 			local ping_type = PingTypes.PING_ONLY
-			network_manager.network_transmit:send_rpc_server("rpc_ping_unit", self_unit_id, enemy_unit_id, false, ping_type, 1)
+			network_manager.network_transmit:send_rpc_server("rpc_ping_unit", self_unit_id, enemy_unit_id, false, 1, ping_type, 1) --Vix: added the first 1 for what i believe to be the flash argument, admittedly unsure what that is but it made the pinging work again
 			return
 		end
 	end
@@ -318,7 +318,7 @@ mod:hook(PlayerBotBase, "_select_ally_by_utility", function (func, self, unit, b
 	for k = 1, #player_and_bot_units, 1 do
 		local player_unit = player_and_bot_units[k]
 
-		if player_unit ~= unit and AiUtils.unit_alive(player_unit) then
+		if player_unit ~= unit and HEALTH_ALIVE[player_unit] then --Vix: updated to match source code and fix crashes
 			local status_ext = ScriptUnit.extension(player_unit, "status_system")
 			local utility = 0
 			local look_at_ally = false
@@ -536,7 +536,7 @@ mod:hook(AIBotGroupSystem, "_update_urgent_targets", function (func, self, dt, t
 				local time_left = is_target_until - t
 
 				if time_left > 0 then
-					if AiUtils.unit_alive(target_unit) then
+					if HEALTH_ALIVE[target_unit] then --Vix: updated to match source code and fix crashes
 						local utility, distance = self:_calculate_opportunity_utility(bot_unit, blackboard, self_pos, old_target, target_unit, t, false, false)
 
 						if best_utility < utility then
@@ -557,7 +557,7 @@ mod:hook(AIBotGroupSystem, "_update_urgent_targets", function (func, self, dt, t
 					local target_unit = alive_bosses[j]
 					local pos = POSITION_LOOKUP[target_unit]
 
-					if AiUtils.unit_alive(target_unit) and not AiUtils.unit_invincible(target_unit) and Vector3.distance_squared(pos, self_pos) < BOSS_ENGAGE_DISTANCE_SQ and not BLACKBOARDS[target_unit].defensive_mode_duration
+					if HEALTH_ALIVE[target_unit] and not AiUtils.unit_invincible(target_unit) and Vector3.distance_squared(pos, self_pos) < BOSS_ENGAGE_DISTANCE_SQ and not BLACKBOARDS[target_unit].defensive_mode_duration --Vix: updated to match source code and fix crashes
 					and (#blackboard.proximite_enemies < 2 or BLACKBOARDS[target_unit].target_unit == bot_unit) then -- added bit
 						local utility, distance = self:_calculate_opportunity_utility(bot_unit, blackboard, self_pos, old_target, target_unit, t, false, false)
 
@@ -576,7 +576,7 @@ mod:hook(AIBotGroupSystem, "_update_urgent_targets", function (func, self, dt, t
 			local hit_by_projectile = blackboard.hit_by_projectile
 
 			for attacking_unit, _ in pairs(hit_by_projectile) do
-				if not AiUtils.unit_alive(attacking_unit) then
+				if not HEALTH_ALIVE[attacking_unit] then --Vix: updated to match source code and fix crashes
 					hit_by_projectile[attacking_unit] = nil
 				end
 			end
